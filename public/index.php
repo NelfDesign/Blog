@@ -1,10 +1,14 @@
 <?php
-//use pointe vers le namespace utilisé
-use Framework\App;
+
+use App\Blog\BlogModule;
 
 require '../vendor/autoload.php';
 
-$app = new App();
+$app = new \Framework\App([
+    BlogModule::class
+]);
 
+//on crée un objet reponse
 $response = $app->run(\GuzzleHttp\Psr7\ServerRequest::fromGlobals());
+//transforme la reponse en PSR7 en objet Http grace au module http-interop/response-sender
 \Http\Response\send($response);

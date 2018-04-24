@@ -21,12 +21,16 @@ class App
     /**
      * App constructor.
      * @param string[] $modules Liste des modules à charger
+     * @param array $dependancies
      */
-    public function __construct(array $modules = [])
+    public function __construct(array $modules = [], array $dependancies = [])
     {
         $this->router = new Router();
+        if (array_key_exists('renderer', $dependancies)) {
+            $dependancies['renderer']->addGlobals('router', $this->router);
+        }
         foreach ($modules as $module) {
-            $this->modules[] = new $module($this->router);
+            $this->modules[] = new $module($this->router, $dependancies['renderer']);
         }
     }
 

@@ -4,8 +4,8 @@ use App\Blog\BlogModule;
 
 require '../vendor/autoload.php';
 
-$renderer = new \Framework\Renderer();
-$renderer->addPath(dirname(__DIR__) . '/Views');
+$renderer = new \Framework\Renderer\TwigRenderer(dirname(__DIR__) . '/Views');
+
 
 $app = new \Framework\App([
     BlogModule::class

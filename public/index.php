@@ -2,7 +2,7 @@
 
 use App\Blog\BlogModule;
 
-require '../vendor/autoload.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
 
 $modules = [
     BlogModule::class
@@ -24,6 +24,8 @@ $container = $builder->build();
 $app = new \Framework\App($container, $modules);
 
 //on crée un objet reponse
-$response = $app->run(\GuzzleHttp\Psr7\ServerRequest::fromGlobals());
-//transforme la reponse en PSR7 en objet Http grace au module http-interop/response-sender
-\Http\Response\send($response);
+if (php_sapi_name() !== "cli") {
+    $response = $app->run(\GuzzleHttp\Psr7\ServerRequest::fromGlobals());
+    //transforme la reponse en PSR7 en objet Http grace au module http-interop/response-sender
+    \Http\Response\send($response);
+}

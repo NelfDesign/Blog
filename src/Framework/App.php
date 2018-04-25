@@ -71,4 +71,12 @@ class App
             throw new \Exception('La réponse n\'est ni une chaine de caractère ni une instance de ResponseInterface');
         }
     }
+
+    /**
+     * @return ContainerInterface
+     */
+    public function getContainer(): ContainerInterface
+    {
+        return $this->container;
+    }
 }

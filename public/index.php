@@ -4,14 +4,24 @@ use App\Blog\BlogModule;
 
 require '../vendor/autoload.php';
 
-$renderer = new \Framework\Renderer\TwigRenderer(dirname(__DIR__) . '/Views');
-
-
-$app = new \Framework\App([
+$modules = [
     BlogModule::class
-], [
-    'renderer' => $renderer
-]);
+];
+
+$builder = new \DI\ContainerBuilder();
+$builder->addDefinitions(dirname(__DIR__) . '/config/config.php');
+
+foreach ($modules as $module) {
+    if ($module::DEFINITIONS) {
+        $builder->addDefinitions($module::DEFINITIONS);
+    }
+}
+$builder->addDefinitions(dirname(__DIR__) . '/config.php');
+
+$container = $builder->build();
+
+
+$app = new \Framework\App($container, $modules);
 
 //on crée un objet reponse
 $response = $app->run(\GuzzleHttp\Psr7\ServerRequest::fromGlobals());

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: Nelfdesign
- * Date: 24/04/2018
- * Time: 12:26
- */
 
 namespace Framework\Renderer;
 

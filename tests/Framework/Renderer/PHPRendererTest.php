@@ -3,18 +3,19 @@
 namespace Tests\Framework;
 
 
-use Framework\Renderer;
 use PHPUnit\Framework\TestCase;
+use Framework\Renderer;
 
 class RendererTest extends TestCase
 {
     private $renderer;
 
+    /**
+     * @throws \Twig_Error_Loader
+     */
     public function setUp()
     {
-        $this->renderer = new Renderer();
-        //on crée le system qui permet de creer un chemin
-        $this->renderer->addPath(__DIR__ . '\Views');
+        $this->renderer = new Renderer\PHPRenderer(__DIR__ . '\Views');
     }
 
     public function testRenderTheRightPath(){

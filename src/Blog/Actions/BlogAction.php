@@ -1,7 +1,12 @@
 <?php
 namespace App\Blog\Actions;
 
+use App\Blog\Table\PostTable;
+use Framework\Actions\RouterAwareAction;
 use Framework\Renderer\RendererInterface;
+use Framework\Router;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class BlogAction
@@ -10,25 +15,42 @@ class BlogAction
      * @var RendererInterface
      */
     private $renderer;
+    /**
+     * @var Router
+     */
+    private $router;
+    /**
+     * @var PostTable
+     */
+    private $postTable;
+
+    /**
+     * utilisation du trait pour la redirection
+     */
+    use RouterAwareAction;
 
     /**
      * BlogAction constructor.
      * @param RendererInterface $renderer
+     * @param Router $router
+     * @param PostTable $postTable
      */
-    public function __construct(RendererInterface $renderer)
+    public function __construct(RendererInterface $renderer, Router $router, PostTable $postTable)
     {
         $this->renderer = $renderer;
+        $this->router = $router;
+        $this->postTable = $postTable;
     }
+
 
     /**
      * @param Request $request
-     * @return string
+     * @return ResponseInterface|string
      */
-    public function __invoke(Request $request): string
+    public function __invoke(Request $request)
     {
-        $slug = $request->getAttribute('slug');
-        if ($slug) {
-            return $this->show($slug);
+        if ($request->getAttribute('id')) {
+            return $this->show($request);
         } else {
             return $this->index();
         }
@@ -39,17 +61,26 @@ class BlogAction
      */
     public function index(): string
     {
-        return $this->renderer->render('@blog\index');
+        $posts = $this->postTable->findPaginated();
+        return $this->renderer->render('@blog\index', compact('posts'));
     }
 
     /**
-     * @param string $slug
-     * @return string
+     * @param Request $request
+     * @return ResponseInterface|string
      */
-    public function show(string $slug): string
+    public function show(Request $request)
     {
+        $slug = $request->getAttribute('slug');
+        $post = $this->postTable->find($request->getAttribute('id'));
+        if ($post->slug !== $slug) {
+            return $this->redirect('blog.show', [
+                'slug' => $post->slug,
+                'id' => $post->id
+            ]);
+        }
         return $this->renderer->render('@blog\show', [
-            'slug' => $slug
+            'post' => $post
         ]);
     }
 }

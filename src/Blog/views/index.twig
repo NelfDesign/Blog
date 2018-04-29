@@ -12,15 +12,15 @@
             {% for post in row %}
             <div class="card">
                 <div class="card-header">
-                    <h2>
+                    <h6>
                         <a href="{{ path('blog.show', { slug: post.slug, id: post.id}) }}">
                             {{ post.name }}
                         </a>
-                    </h2>
+                    </h6>
                 </div>
                 <div class="card-block">
                     <p class="card-text">
-                        {{ post.content | nl2br | extrait }}
+                        {{ post.content | extrait | nl2br }}
                     </p>
                     <p class="text-mutted">
                         {{ post.created_at | ago }}
@@ -36,6 +36,6 @@
         </div>
         {% endfor %}
     </div>
-
+<br>
     {{ paginate(posts, 'blog.index') }}
 {% endblock %}
